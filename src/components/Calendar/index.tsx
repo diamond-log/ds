@@ -16,7 +16,9 @@ import { CalendarOptions } from '@fullcalendar/core';
 // Utils
 import allLocales from '@fullcalendar/core/locales-all';
 
-export const Calendar = forwardRef<FullCalendar>(({...props}: CalendarOptions, propRef) => {
+export interface DSCalendarProps extends CalendarOptions {};
+
+export const Calendar = forwardRef<FullCalendar, DSCalendarProps>(({...props}, propRef) => {
 
     const innerRef = useRef<FullCalendar>(null);
 

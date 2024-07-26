@@ -16,6 +16,7 @@ const interaction_1 = __importDefault(require("@fullcalendar/interaction"));
 const timegrid_1 = __importDefault(require("@fullcalendar/timegrid"));
 // Utils
 const locales_all_1 = __importDefault(require("@fullcalendar/core/locales-all"));
+;
 exports.Calendar = (0, react_1.forwardRef)(({ ...props }, propRef) => {
     const innerRef = (0, react_1.useRef)(null);
     const ref = propRef || innerRef;
