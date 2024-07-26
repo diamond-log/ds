@@ -1,0 +1,8 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BagIcon = void 0;
+const jsx_runtime_1 = require("react/jsx-runtime");
+const BagIcon = (props) => {
+    return ((0, jsx_runtime_1.jsxs)("svg", { width: "31", height: "31", viewBox: "0 0 31 31", fill: "none", xmlns: "http://www.w3.org/2000/svg", ...props, children: [(0, jsx_runtime_1.jsx)("rect", { width: "31", height: "31", rx: "15.5", fill: "#A370F7" }), (0, jsx_runtime_1.jsxs)("g", { clipPath: "url(#clip0_2594_406790)", children: [(0, jsx_runtime_1.jsx)("rect", { width: "14", height: "14", transform: "translate(8.5 8.5)", fill: "white", fillOpacity: "0.01" }), (0, jsx_runtime_1.jsx)("path", { d: "M15.502 9.37512C16.0821 9.37512 16.6385 9.60559 17.0487 10.0158C17.459 10.4261 17.6895 10.9825 17.6895 11.5626V12.0001H13.3145V11.5626C13.3145 10.9825 13.5449 10.4261 13.9552 10.0158C14.3654 9.60559 14.9218 9.37512 15.502 9.37512ZM18.5645 12.0001V11.5626C18.5645 10.7504 18.2418 9.97144 17.6675 9.39711C17.0931 8.82278 16.3142 8.50012 15.502 8.50012C14.6897 8.50012 13.9108 8.82278 13.3364 9.39711C12.7621 9.97144 12.4395 10.7504 12.4395 11.5626V12.0001H9.37695V20.7501C9.37695 21.2143 9.56133 21.6594 9.88952 21.9876C10.2177 22.3157 10.6628 22.5001 11.127 22.5001H19.877C20.3411 22.5001 20.7862 22.3157 21.1144 21.9876C21.4426 21.6594 21.627 21.2143 21.627 20.7501V12.0001H18.5645Z", fill: "white" })] }), (0, jsx_runtime_1.jsx)("defs", { children: (0, jsx_runtime_1.jsx)("clipPath", { id: "clip0_2594_406790", children: (0, jsx_runtime_1.jsx)("rect", { width: "14", height: "14", fill: "white", transform: "translate(8.5 8.5)" }) }) })] }));
+};
+exports.BagIcon = BagIcon;
