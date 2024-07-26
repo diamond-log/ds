@@ -9,9 +9,11 @@
     "Fred Nunes"
   ],
   "author": "Diamond Log",
+  "main": "dist/index.js",
   "types": "src/index.ts",
   "scripts": {
-    "build": "tsc --build",
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
     "build:watch": "tsc --watch"
   },
   "dependencies": {

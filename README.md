@@ -1,1 +1,1 @@
-# DiamondLog Design System
+# Diamond Log Design System
