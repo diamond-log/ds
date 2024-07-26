@@ -1,0 +1,39 @@
+{
+  "private": true,
+  "name": "diamond-ds",
+  "version": "0.1.0",
+  "description": "Diamond Log's Design System",
+  "license": "UNLICENSED",
+  "contributors": [
+    "Alexsandro Urbano",
+    "Fred Nunes"
+  ],
+  "author": "Diamond Log",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "tsc --build",
+    "build:watch": "tsc --watch"
+  },
+  "dependencies": {
+    "@fullcalendar/bootstrap5": "^6.1.14",
+    "@fullcalendar/core": "^6.1.14",
+    "@fullcalendar/daygrid": "^6.1.14",
+    "@fullcalendar/interaction": "^6.1.14",
+    "@fullcalendar/react": "^6.1.14",
+    "@fullcalendar/timegrid": "^6.1.14",
+    "next": "^14.1.4",
+    "react": "^18.2.0",
+    "react-beautiful-dnd": "^13.1.1",
+    "react-bootstrap": "^2.10.2",
+    "react-hook-form": "^7.51.5",
+    "react-merge-refs": "^2.1.1",
+    "react-tag-input": "^6.10.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "@types/react": "^18.2.67",
+    "@types/react-beautiful-dnd": "^13.1.8",
+    "@types/react-dom": "^18.2.22",
+    "typescript": "^5.4.2"
+  }
+}
