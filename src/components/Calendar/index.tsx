@@ -19,7 +19,7 @@ import allLocales from '@fullcalendar/core/locales-all';
 export type DSCalendarProps = {
 } & CalendarOptions;
 
-export const Calendar = forwardRef<FullCalendar, DSCalendarProps>(({...props}, propRef) => {
+export const Calendar = forwardRef<FullCalendar>(({...props}: DSCalendarProps, propRef) => {
 
     const innerRef = useRef<FullCalendar>(null);
 

@@ -1,11 +1,15 @@
 {
     "compilerOptions": {
       "target": "ESNext",
-      "skipLibCheck": true,
-      "outDir": "dist",
-      "rootDir": "src",
+      "module": "CommonJS",
+      "declaration": true,
+      "outDir": "./dist",
+      "strict": true,
       "jsx": "react-jsx",
-      "module": "CommonJS"
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "rootDir": "src",
     },
     "include": ["src/**/*"],
     "exclude": ["**/node_modules/**"]
