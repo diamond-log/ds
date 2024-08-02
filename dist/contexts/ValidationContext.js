@@ -1,4 +1,5 @@
 "use strict";
+'use client';
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useValidation = exports.ValidationContext = void 0;
 exports.ValidationProvider = ValidationProvider;
@@ -15,8 +16,8 @@ function ValidationProvider({ children, field, errorMessageProps }) {
     const reactHookForm = (0, react_hook_form_1.useFormContext)();
     const form = (dsFormHook || reactHookForm);
     const { errors } = (0, react_hook_form_1.useFormState)({ control: form.control, name: field });
-    const value = form?.getValues?.(field);
-    const className = errors[field]
+    const value = field ? form?.getValues?.(field) : "";
+    const className = field && errors[field]
         ? "is-invalid"
         : value
             ? "" // ? "is-valid"

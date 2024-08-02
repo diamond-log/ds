@@ -28,7 +28,6 @@ function HookFormProvider({ children, useFormProps, onSubmit: onSubmitProp, onEr
     const onSubmit = context?.onSubmit || onSubmitProp || (() => { });
     const onError = context?.onError || onErrorProp || (() => { });
     return ((0, jsx_runtime_1.jsx)(react_hook_form_1.FormProvider, { ...form, children: (0, jsx_runtime_1.jsx)(Form_1.default, { noValidate: true, ...props, onSubmit: (e) => {
-                console.log(e);
                 form.handleSubmit(onSubmit, onError)(e);
             }, children: children }) }));
 }

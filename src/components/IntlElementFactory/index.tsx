@@ -13,7 +13,7 @@ import { DSTagFieldProps, TagField } from "../TagField";
 import { DSSelectProps } from "../../types/Select";
 import { Select } from "../Select";
 import { ReactHTML, HTMLAttributes, ReactNode } from "react";
-import { ValidationProvider } from "../../contexts/ValidationContext";
+import { ValidationProviderServer } from "../../contexts/ValidationProviderServer";
 
 interface ButtonElement extends DSButtonProps, Omit<IntlProps, "labelId" | "labelClassName"> {
 	as: "button";
@@ -93,23 +93,23 @@ export function IntlElementFactory<T extends Record<string, any>>(dictionaryProp
 				}
 				case "input-tag": {
 					return (
-						<ValidationProvider field={name}>
+						<ValidationProviderServer field={name}>
 							<TagField {...props} dictionary={dictionary}/>
-						</ValidationProvider>
+						</ValidationProviderServer>
 					)
 				}
 				case "input": {
 					return (
-						<ValidationProvider field={name}>
+						<ValidationProviderServer field={name}>
 							<Input {...props} ref={ref} dictionary={dictionary}/>
-						</ValidationProvider>
+						</ValidationProviderServer>
 					)
 				}
 				case "textarea": {
 					return (
-						<ValidationProvider field={name}>
+						<ValidationProviderServer field={name}>
 							<Textarea {...props} ref={ref} dictionary={dictionary}/>
-						</ValidationProvider>
+						</ValidationProviderServer>
 					)
 				}
 				case "a": {
@@ -118,9 +118,9 @@ export function IntlElementFactory<T extends Record<string, any>>(dictionaryProp
 				}
 				case "select": {
 					return (
-						<ValidationProvider field={name}>
+						<ValidationProviderServer field={name}>
 							<Select {...props} dictionary={dictionary} ref={ref}/>
-						</ValidationProvider>
+						</ValidationProviderServer>
 					)
 				}
 				default: {

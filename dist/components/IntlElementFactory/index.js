@@ -14,7 +14,7 @@ const loremText_1 = require("../../utils/loremText");
 const Textarea_1 = require("../Textarea");
 const TagField_1 = require("../TagField");
 const Select_1 = require("../Select");
-const ValidationContext_1 = require("../../contexts/ValidationContext");
+const ValidationProviderServer_1 = require("../../contexts/ValidationProviderServer");
 ;
 ;
 ;
@@ -49,20 +49,20 @@ function IntlElementFactory(dictionaryProp, form) {
                 return (0, jsx_runtime_1.jsx)(Button_1.Button, { ...props, dictionary: dictionary });
             }
             case "input-tag": {
-                return ((0, jsx_runtime_1.jsx)(ValidationContext_1.ValidationProvider, { field: name, children: (0, jsx_runtime_1.jsx)(TagField_1.TagField, { ...props, dictionary: dictionary }) }));
+                return ((0, jsx_runtime_1.jsx)(ValidationProviderServer_1.ValidationProviderServer, { field: name, children: (0, jsx_runtime_1.jsx)(TagField_1.TagField, { ...props, dictionary: dictionary }) }));
             }
             case "input": {
-                return ((0, jsx_runtime_1.jsx)(ValidationContext_1.ValidationProvider, { field: name, children: (0, jsx_runtime_1.jsx)(Input_1.Input, { ...props, ref: ref, dictionary: dictionary }) }));
+                return ((0, jsx_runtime_1.jsx)(ValidationProviderServer_1.ValidationProviderServer, { field: name, children: (0, jsx_runtime_1.jsx)(Input_1.Input, { ...props, ref: ref, dictionary: dictionary }) }));
             }
             case "textarea": {
-                return ((0, jsx_runtime_1.jsx)(ValidationContext_1.ValidationProvider, { field: name, children: (0, jsx_runtime_1.jsx)(Textarea_1.Textarea, { ...props, ref: ref, dictionary: dictionary }) }));
+                return ((0, jsx_runtime_1.jsx)(ValidationProviderServer_1.ValidationProviderServer, { field: name, children: (0, jsx_runtime_1.jsx)(Textarea_1.Textarea, { ...props, ref: ref, dictionary: dictionary }) }));
             }
             case "a": {
                 const { as, ...linkProps } = props;
                 return (0, jsx_runtime_1.jsx)(link_1.default, { ...linkProps, children, ref });
             }
             case "select": {
-                return ((0, jsx_runtime_1.jsx)(ValidationContext_1.ValidationProvider, { field: name, children: (0, jsx_runtime_1.jsx)(Select_1.Select, { ...props, dictionary: dictionary, ref: ref }) }));
+                return ((0, jsx_runtime_1.jsx)(ValidationProviderServer_1.ValidationProviderServer, { field: name, children: (0, jsx_runtime_1.jsx)(Select_1.Select, { ...props, dictionary: dictionary, ref: ref }) }));
             }
             default: {
                 return (0, react_1.createElement)(props.as, {

@@ -1,3 +1,5 @@
+'use client';
+
 import { FieldValues, UseFormReturn, useFormContext, useFormState } from "react-hook-form";
 import { useForm } from "./FormContext";
 import { createContext, useContext } from "react";
@@ -22,8 +24,8 @@ export function ValidationProvider({ children, field, errorMessageProps }: DSVal
   const reactHookForm = useFormContext();
   const form = (dsFormHook || reactHookForm) as UseFormReturn;
   const { errors } = useFormState({ control: form.control, name: field });
-  const value = form?.getValues?.(field);
-  const className = errors[field]
+  const value = field ?  form?.getValues?.(field) : "";
+  const className = field && errors[field]
     ? "is-invalid"
     : value
       ? "" // ? "is-valid"
