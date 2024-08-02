@@ -18,6 +18,5 @@ __exportStar(require("./components"), exports);
 __exportStar(require("./SVGs"), exports);
 __exportStar(require("./utils"), exports);
 __exportStar(require("./types"), exports);
-__exportStar(require("./hooks"), exports);
 __exportStar(require("./helpers"), exports);
 __exportStar(require("./providers"), exports);

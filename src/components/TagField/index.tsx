@@ -5,7 +5,7 @@
 import { useEffect, useState } from 'react';
 import { WithOutContext as ReactTags, ReactTagsWrapperProps, SEPARATORS } from 'react-tag-input';
 import { useForm } from '../../contexts/FormContext';
-import { useValidation } from '../../hooks/useValidation';
+import { useValidation } from '../../contexts/ValidationContext';
 import { IntlProps } from '../../types';
 import { idToIndex } from '../../utils/idToIndex';
 import { Icon } from '../Icon';
@@ -62,7 +62,7 @@ export function TagField<ValueType = any>({
   const { setValue, getValues } = useForm<
   { [field: string]: ValueType } & typeof fieldId extends string ? { [fieldId: string]: ValueType } : {}
   >();
-  const { className, ErrorMessage } = useValidation(field);
+  const { className } = useValidation(field);
 
   const filteredTags = tags.filter(tag => !!tag?.id);
 
@@ -283,7 +283,6 @@ export function TagField<ValueType = any>({
       }}
       {...props}
       />
-      <ErrorMessage />
     </>
   );
 

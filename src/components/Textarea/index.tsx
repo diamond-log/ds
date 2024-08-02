@@ -2,13 +2,13 @@ import FormControl from "react-bootstrap/FormControl"
 import { DSTextareaProps } from "../../types/Textarea"
 import { idToIndex } from "../../utils/idToIndex";
 import { forwardRef } from "react";
-import { useValidation } from "../../hooks/useValidation";
+import { useValidation } from "../../contexts/ValidationContext";
 
 export const Textarea = forwardRef(({ dictionary, as, labelId, labelClassName, autoResize, ...props }: DSTextareaProps, ref: React.ForwardedRef<any>) => {
 
     const intlText = dictionary?.[idToIndex(props.id)];
     const placeholder = props?.placeholder || intlText;
-    const { className, ErrorMessage } = useValidation(props.name!);
+    const { className } = useValidation();
 
     props = {...props, className: `${className} ${props.className || ""}`};
 
@@ -33,14 +33,12 @@ export const Textarea = forwardRef(({ dictionary, as, labelId, labelClassName, a
             className={labelClassName + (props?.required ? ' isRequired' : '')}
             >{dictionary?.[idToIndex(labelId)] || ''}</label>
             {TextareaElement}
-            <ErrorMessage/>
         </div>
     )
 
     return (
         <>
             {TextareaElement}
-            <ErrorMessage/>
         </>
     )
 });

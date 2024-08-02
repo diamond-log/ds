@@ -13,6 +13,7 @@ import { DSTagFieldProps, TagField } from "../TagField";
 import { DSSelectProps } from "../../types/Select";
 import { Select } from "../Select";
 import { ReactHTML, HTMLAttributes, ReactNode } from "react";
+import { ValidationProvider } from "../../contexts/ValidationContext";
 
 interface ButtonElement extends DSButtonProps, Omit<IntlProps, "labelId" | "labelClassName"> {
 	as: "button";
@@ -61,33 +62,6 @@ export function IntlElementFactory<T extends Record<string, any>>(dictionaryProp
 
 			const props = allProps as IntlElementProps & IntlProps;
 
-			// if(!dictionaryProp) {
-			// 	throw new Error(`Element '${allProps.as}' is missing dictionary property`);
-			// }
-			// if(!props.id && !props.labelId) {
-			// 	throw new Error(`Element '${allProps.as}' is missing id property`, {
-			// 		cause: props
-			// 	});
-			// }
-			// if(
-			// 	!form &&
-			// 	!dictionaryProp?.[idToIndex(allProps.id)] &&
-			// 	!dictionaryProp?.[idToIndex(props.labelId)]
-			// ) {
-			// 	throw new Error(`Property '${allProps.id}' not found in dictionary for element '${allProps.as}'`, {
-			// 		cause: dictionaryProp
-			// 	});
-			// }
-			// if(
-			// 	form &&
-			// 	!dictionaryProp?.[idToIndex(form)]?.[idToIndex(props.id)] &&
-			// 	!dictionaryProp?.[idToIndex(form)]?.[idToIndex(props.labelId)]
-			// ) {
-			// 	throw new Error(`Property '${allProps.id || props.labelId}' of object '${form}' not found in dictionary for element '${allProps.as}'`, {
-			// 		cause: dictionaryProp
-			// 	});
-			// }
-
 			const testText = props?.testText;
 			
 			const variant = props?.variant;
@@ -111,26 +85,43 @@ export function IntlElementFactory<T extends Record<string, any>>(dictionaryProp
 			})();
 
 			const dictionary = (form ? dictionaryProp[idToIndex(form)] : dictionaryProp) as Record<string, string>;
+			const name: string | undefined = (props as React.InputHTMLAttributes<HTMLInputElement>)?.name;
 
 			switch (props.as) {
 				case "button": {
 					return <Button {...props} dictionary={dictionary }/>
 				}
 				case "input-tag": {
-					return <TagField {...props} dictionary={dictionary}/>
+					return (
+						<ValidationProvider field={name}>
+							<TagField {...props} dictionary={dictionary}/>
+						</ValidationProvider>
+					)
 				}
 				case "input": {
-					return <Input {...props} ref={ref} dictionary={dictionary}/>
+					return (
+						<ValidationProvider field={name}>
+							<Input {...props} ref={ref} dictionary={dictionary}/>
+						</ValidationProvider>
+					)
 				}
 				case "textarea": {
-					return <Textarea {...props} ref={ref} dictionary={dictionary}/>
+					return (
+						<ValidationProvider field={name}>
+							<Textarea {...props} ref={ref} dictionary={dictionary}/>
+						</ValidationProvider>
+					)
 				}
 				case "a": {
 					const { as, ...linkProps } = props as LinkElement;
 					return <Link {...{...linkProps, children, ref}} />
 				}
 				case "select": {
-					return <Select {...props} dictionary={dictionary} ref={ref}/>
+					return (
+						<ValidationProvider field={name}>
+							<Select {...props} dictionary={dictionary} ref={ref}/>
+						</ValidationProvider>
+					)
 				}
 				default: {
 					return createElement(props.as, {

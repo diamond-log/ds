@@ -5,14 +5,14 @@ import { DSInputProps } from "../../types/Input"
 import { forwardRef, useState } from "react";
 import { idToIndex } from "../../utils/idToIndex";
 import { Icon } from "../Icon";
-import { useValidation } from "../../hooks/useValidation";
+import { useValidation } from "../../contexts/ValidationContext";
 
 export const Input = forwardRef(({ dictionary, togglePasswordVisibility, alert, labelId, labelClassName, icon, ...props }: DSInputProps, ref: React.ForwardedRef<FormControlProps>) => {
 
     const [visible, setVisible] = useState<boolean>(false);
     const intlText = dictionary?.[idToIndex(props.id)];
     const placeholder = props?.placeholder || intlText;
-    const { className, ErrorMessage } = useValidation(props.name!);
+    const { className } = useValidation();
     props = {...props, className: `${className} ${props.className || ""}`};
 
     function toggleVisibility() {
@@ -105,7 +105,6 @@ export const Input = forwardRef(({ dictionary, togglePasswordVisibility, alert, 
                     {LabelComponent}
                     {InputComponent}
                     {AlertComponent}
-                    <ErrorMessage />
                 </div>
             </>
         ) :
@@ -114,14 +113,12 @@ export const Input = forwardRef(({ dictionary, togglePasswordVisibility, alert, 
                 <div className={"w-100 d-flex flex-column gap-1 p-0"}>
                     {LabelComponent}
                     {InputComponent}
-                    <ErrorMessage />
                 </div>
             </>
         )
         : (
             <>
                 {InputComponent}
-                <ErrorMessage />
             </>
         )
     )
