@@ -42,6 +42,7 @@ export type DSTagFieldProps<ValueType = any[]> = {
   minLength?: number;
   maxLength?: number;
   fieldId?: string;
+  required?: boolean;
 } & Omit<ReactTagsWrapperProps, 'suggestions' | "tags" | "handleAddition"> & Omit<IntlProps, "intltextposition" | "testText">;
 
 export function TagField<ValueType = any>({

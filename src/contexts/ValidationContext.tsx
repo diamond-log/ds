@@ -23,7 +23,9 @@ export function ValidationProvider({ children, field, errorMessageProps }: DSVal
   const dsFormHook = useForm<any>();
   const reactHookForm = useFormContext();
   const form = (dsFormHook || reactHookForm) as UseFormReturn;
-  const { errors } = useFormState({ control: form.control, name: field });
+  const useState = form?.control ? useFormState : (() => {}) as typeof useFormState;
+  const formState = useState({ control: form ? form?.control : undefined, name: field });
+  const errors = formState?.errors;
   const value = field ?  form?.getValues?.(field) : "";
   const className = field && errors[field]
     ? "is-invalid"
@@ -36,9 +38,13 @@ export function ValidationProvider({ children, field, errorMessageProps }: DSVal
   return (
     <ValidationContext.Provider value={{ className }}>
       {children}
-      <small {...errorMessageProps} className={`${errorMessageProps?.className || "text-danger"}`}>
-        {(errors?.[field]?.message) as unknown as React.ReactNode}
-      </small>
+      {
+        errors?.[field]?.message && (
+          <small {...errorMessageProps} className={`${errorMessageProps?.className || "text-danger"}`}>
+            {(errors?.[field]?.message) as unknown as React.ReactNode}
+          </small>
+        )
+      }
     </ValidationContext.Provider>
   )
 }

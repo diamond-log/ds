@@ -27,5 +27,6 @@ export type DSTagFieldProps<ValueType = any[]> = {
     minLength?: number;
     maxLength?: number;
     fieldId?: string;
+    required?: boolean;
 } & Omit<ReactTagsWrapperProps, 'suggestions' | "tags" | "handleAddition"> & Omit<IntlProps, "intltextposition" | "testText">;
 export declare function TagField<ValueType = any>({ allowDragDrop, allowAddNewTags, autoFocus, minQueryLength, inputFieldPosition, field, dictionary, labelId, labelClassName, onAddition, suggestions, defaultValue, maxLength, minLength, maxTags, fieldId, ...props }: DSTagFieldProps<ValueType>): import("react/jsx-runtime").JSX.Element;

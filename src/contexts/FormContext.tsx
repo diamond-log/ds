@@ -55,7 +55,7 @@ function HookFormProvider<FormDataType extends FieldValues, ContextProps = {}>(
 			noValidate
 			{...props}
 			onSubmit={(e) => {
-				form.handleSubmit(onSubmit, onError)(e)
+				form.handleSubmit(onSubmit, onError)(e);
 			}}
 			>
 				{children}

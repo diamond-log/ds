@@ -15,7 +15,9 @@ function ValidationProvider({ children, field, errorMessageProps }) {
     const dsFormHook = (0, FormContext_1.useForm)();
     const reactHookForm = (0, react_hook_form_1.useFormContext)();
     const form = (dsFormHook || reactHookForm);
-    const { errors } = (0, react_hook_form_1.useFormState)({ control: form.control, name: field });
+    const useState = form?.control ? react_hook_form_1.useFormState : (() => { });
+    const formState = useState({ control: form ? form?.control : undefined, name: field });
+    const errors = formState?.errors;
     const value = field ? form?.getValues?.(field) : "";
     const className = field && errors[field]
         ? "is-invalid"
@@ -24,5 +26,5 @@ function ValidationProvider({ children, field, errorMessageProps }) {
             : "";
     if (!field)
         return children;
-    return ((0, jsx_runtime_1.jsxs)(exports.ValidationContext.Provider, { value: { className }, children: [children, (0, jsx_runtime_1.jsx)("small", { ...errorMessageProps, className: `${errorMessageProps?.className || "text-danger"}`, children: (errors?.[field]?.message) })] }));
+    return ((0, jsx_runtime_1.jsxs)(exports.ValidationContext.Provider, { value: { className }, children: [children, errors?.[field]?.message && ((0, jsx_runtime_1.jsx)("small", { ...errorMessageProps, className: `${errorMessageProps?.className || "text-danger"}`, children: (errors?.[field]?.message) }))] }));
 }
