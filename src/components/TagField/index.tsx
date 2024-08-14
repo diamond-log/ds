@@ -5,26 +5,27 @@
 import { useEffect, useState } from 'react';
 import { WithOutContext as ReactTags, ReactTagsWrapperProps, SEPARATORS } from 'react-tag-input';
 import { useForm } from '../../contexts/FormContext';
-import { useValidation } from '../../contexts/ValidationContext';
+import { useValidation } from '../../hooks/useValidation';
 import { IntlProps } from '../../types';
 import { idToIndex } from '../../utils/idToIndex';
 import { Icon } from '../Icon';
 import { normalizeString } from '../../utils';
+import { RegisterOptions } from 'react-hook-form';
 
 export type Tag = {
-    id: string;
-    text: React.ReactNode;
-    className?: string;
-    value: any;
-    disabled?: boolean;
+  id: string;
+  text: React.ReactNode;
+  className?: string;
+  value: any;
+  disabled?: boolean;
 }
 
 export type Suggestion<ValueType = any[]> = {
-    id: string;
-    text: string;
-    className?: string;
-    render?: React.ReactNode;
-    value?: ValueType extends any[] ? ValueType[number] : ValueType;
+  id: string;
+  text: string;
+  className?: string;
+  render?: React.ReactNode;
+  value?: ValueType extends any[] ? ValueType[number] : ValueType;
 }
 
 export type DSTagFieldProps<ValueType = any[]> = {
@@ -38,16 +39,24 @@ export type DSTagFieldProps<ValueType = any[]> = {
 
   onAddition?: (data: Suggestion<ValueType>[number]) => Tag | undefined | false;
   allowAddNewTags?: boolean;
+  minTags?: number;
   maxTags?: number;
   minLength?: number;
   maxLength?: number;
   fieldId?: string;
   required?: boolean;
+  validateMessage?: {
+    required?: string;
+    minTags?: string;
+    maxTags?: string;
+  }
+  className?: string;
 } & Omit<ReactTagsWrapperProps, 'suggestions' | "tags" | "handleAddition"> & Omit<IntlProps, "intltextposition" | "testText">;
 
 export function TagField<ValueType = any>({
   allowDragDrop = false, allowAddNewTags = false, autoFocus = false, minQueryLength = 1, inputFieldPosition = "inline",
-  field, dictionary, labelId, labelClassName, onAddition, suggestions, defaultValue, maxLength, minLength, maxTags, fieldId = "uid", ...props
+  field, dictionary, labelId, labelClassName, onAddition, suggestions, defaultValue, maxLength, minLength, minTags, maxTags,
+  fieldId = "uid", validateMessage, required, ...props
   }: DSTagFieldProps<ValueType>) {
 
   const [tags, setTags] = useState<Array<Tag>>(
@@ -60,12 +69,23 @@ export function TagField<ValueType = any>({
       : []
   );
   const [focus, setFocus] = useState(false);
-  const { setValue, getValues } = useForm<
+  const { setValue, getValues, clearErrors, setError, formState: { errors } } = useForm<
   { [field: string]: ValueType } & typeof fieldId extends string ? { [fieldId: string]: ValueType } : {}
   >();
-  const { className } = useValidation(field);
+  const validation: RegisterOptions | undefined = (minTags || maxTags || required ) ? {
+    validate: {
+      required: (arrValue: any[]) => required ? ( arrValue?.length > 0 ? undefined : validateMessage?.required ) : undefined,
+      minTags: (arrValue: any[]) => minTags ? ( arrValue?.length >= minTags ? undefined : validateMessage?.minTags ) : undefined,
 
-  const filteredTags = tags.filter(tag => !!tag?.id);
+      // refactor
+      maxTags: (arrValue: any[]) => maxTags && arrValue ? ( arrValue.length <= maxTags ? undefined : validateMessage?.maxTags ) : undefined
+    }
+  } : undefined;
+
+  const { className, ErrorMessage, ValidationInput } = useValidation({
+    field,
+    registerOptions: validation
+  });
 
   useEffect(() => {
     setTags(
@@ -77,8 +97,10 @@ export function TagField<ValueType = any>({
       }))
       : []
     )
-  },[defaultValue])
+  },[defaultValue]);
 
+  const filteredTags = tags.filter(tag => !!tag?.id);
+  
   const handleDelete = (
     index: number,
     _event: React.MouseEvent<HTMLSpanElement, MouseEvent> | React.KeyboardEvent<HTMLSpanElement>
@@ -103,6 +125,20 @@ export function TagField<ValueType = any>({
     });
 
     setValue(field, formValues);
+
+    if(required && formValues.length === 0) {
+      setError(field, {
+        type: "required",
+        message: validateMessage?.required
+      })
+    }
+
+    if(minTags && formValues.length < minTags) {
+      setError(field, {
+        type: "minTags",
+        message: validateMessage?.minTags
+      })
+    }
   }; 
 
   const onTagUpdate = (index: number, newTag: Tag) => {
@@ -169,11 +205,19 @@ export function TagField<ValueType = any>({
     }
 
     const prevValues = getValues(field) || [];
+    const newValues = [...prevValues, tagsValue.at(-1).value];
 
     setValue(
       field,
-      [...prevValues, tagsValue.at(-1).value]
+      newValues
     );
+
+    if(
+      errors[field]?.type === "minTags" && newValues.length >= minTags ||
+      errors[field]?.type === "required" && newValues.length >= (minTags || 0)
+    ) {
+      clearErrors(field);
+    }
   };
 
    const handleDrag = (tag: Tag, currPos: number, newPos: number) => {
@@ -195,7 +239,7 @@ export function TagField<ValueType = any>({
 
   const renderSuggestion = (item: Tag, query: string) => {
 
-    if(tags.some(tag => tag?.id === item?.id)) return;
+    if( tags.some(tag => tag?.id === item?.id) ) return;
 
     // refactor
     const suggestion = item as unknown as Suggestion;
@@ -213,6 +257,14 @@ export function TagField<ValueType = any>({
     )
   }
 
+  const shouldRendersuggestions = (query: string) => {
+    if(
+      maxTags && tags.length >= maxTags
+    ) return false;
+
+    if(focus) return true;
+  }
+
   const filterSuggestions = (query: string, suggestions: Array<Tag>): Array<Tag> => {
     const ns = (str: string) => normalizeString(str, { lowerCase: true });
 
@@ -227,6 +279,9 @@ export function TagField<ValueType = any>({
   const InputTagElement = (
     <>
       <ReactTags
+      inputProps={{
+        disabled: maxTags && tags.length >= maxTags
+      }}
       autocomplete={!allowAddNewTags ? true : props?.autocomplete}
       autoFocus={autoFocus}
       tags={filteredTags}
@@ -234,7 +289,7 @@ export function TagField<ValueType = any>({
       handleInputFocus={() => setFocus(true)}
       handleInputBlur={() => setFocus(false)}
       renderSuggestion={renderSuggestion}
-      shouldRenderSuggestions={() => focus}
+      shouldRenderSuggestions={shouldRendersuggestions}
       handleFilterSuggestions={filterSuggestions}
       separators={[SEPARATORS.ENTER]}
       handleDelete={handleDelete}
@@ -260,22 +315,11 @@ export function TagField<ValueType = any>({
       }}
       placeholder={dictionary?.[idToIndex(props.id)] || ''}
       classNames={{
-        // root: "tagfield-root",
-        // rootFocused: "tagfield-root-focused",
-        // selected: "tagfield-selected",
-        // selectedTag: "tagfield-selected-tag",
-        // selectedTagName: "tagfield-selected-tag-name",
-        // search: "tagfield-search",
-        // searchInput: "tagfield-search-input",
-        // suggestions: "tagfield-suggestions",
-        // suggestionActive: "tagfield-suggestion-active",
-        // suggestionDisabled: "tagfield-suggestion-disabled",
         tag: 'tagfield-tag bg-gray-200 rounded-1',
         tags: 'tagfield-tags w-100',
         tagInput: 'tagfield-tag-input flex-grow-1',
         tagInputField: 'tagfield-tag-input-field',
-        selected: 'tagfield-selected ' + className,
-        // remove: 'tagfield-remove',
+        selected: 'tagfield-selected' + (className ? ` ${className}` : '') + (props?.className ? ` ${props?.className}` : ''),
         suggestions: 'tagfield-suggestions border border-gray',
         activeSuggestion: 'tagfield-active-suggestion',
         editTagInput: 'tagfield-edit-tag-input',
@@ -288,20 +332,30 @@ export function TagField<ValueType = any>({
   );
 
   if(labelId) return (
-    <div className={"w-100 d-flex flex-column gap-1 p-0"}>
-			{
-        labelId
-          ? (
-            <label
-            htmlFor={props.id}
-            className={labelClassName + (props?.required ? ' isRequired' : '')}
-            >{dictionary[idToIndex(labelId)]}</label>
-          ) : null
-      }
-      {InputTagElement}
-    </div>
+    <>
+      <div className={"w-100 d-flex flex-column gap-1 p-0"}>
+        {
+          labelId
+            ? (
+              <label
+              htmlFor={props.id}
+              className={labelClassName + (required ? ' isRequired' : '')}
+              >{dictionary[idToIndex(labelId)]}</label>
+            ) : null
+        }
+        {InputTagElement}
+        {ErrorMessage}
+      </div>
+      {ValidationInput}
+    </>
   )
 
-  return InputTagElement;
+  return (
+    <>
+      {InputTagElement}
+      {ErrorMessage}
+      {ValidationInput}
+    </>
+  )
 
 };

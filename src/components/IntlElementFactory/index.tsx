@@ -1,19 +1,17 @@
-import { createElement, forwardRef } from "react";
+import Link, { LinkProps } from "next/link";
+import { createElement, forwardRef, HTMLAttributes, ReactHTML, ReactNode } from "react";
 import { BootstrapVariants } from "../../types/BootstrapVariants";
-import { IntlProps } from "../../types/IntlProps";
-import { idToIndex } from "../../utils/idToIndex";
-import { Button } from "../Button";
-import { Input } from "../Input";
 import { DSButtonProps } from "../../types/Button";
 import { DSInputProps } from "../../types/Input";
-import Link, { LinkProps } from "next/link";
-import { loremText } from "../../utils/loremText";
-import { Textarea } from "../Textarea";
-import { DSTagFieldProps, TagField } from "../TagField";
+import { IntlProps } from "../../types/IntlProps";
 import { DSSelectProps } from "../../types/Select";
+import { idToIndex } from "../../utils/idToIndex";
+import { loremText } from "../../utils/loremText";
+import { Button } from "../Button";
+import { Input } from "../Input";
 import { Select } from "../Select";
-import { ReactHTML, HTMLAttributes, ReactNode } from "react";
-import { ValidationProviderServer } from "../../contexts/ValidationProviderServer";
+import { DSTagFieldProps, TagField } from "../TagField";
+import { Textarea } from "../Textarea";
 
 interface ButtonElement extends DSButtonProps, Omit<IntlProps, "labelId" | "labelClassName"> {
 	as: "button";
@@ -93,23 +91,17 @@ export function IntlElementFactory<T extends Record<string, any>>(dictionaryProp
 				}
 				case "input-tag": {
 					return (
-						<ValidationProviderServer field={name}>
-							<TagField {...props} dictionary={dictionary}/>
-						</ValidationProviderServer>
+						<TagField {...props} dictionary={dictionary}/>
 					)
 				}
 				case "input": {
 					return (
-						<ValidationProviderServer field={name}>
-							<Input {...props} ref={ref} dictionary={dictionary}/>
-						</ValidationProviderServer>
+						<Input {...props} ref={ref} dictionary={dictionary}/>
 					)
 				}
 				case "textarea": {
 					return (
-						<ValidationProviderServer field={name}>
-							<Textarea {...props} ref={ref} dictionary={dictionary}/>
-						</ValidationProviderServer>
+						<Textarea {...props} ref={ref} dictionary={dictionary}/>
 					)
 				}
 				case "a": {
@@ -118,14 +110,14 @@ export function IntlElementFactory<T extends Record<string, any>>(dictionaryProp
 				}
 				case "select": {
 					return (
-						<ValidationProviderServer field={name}>
-							<Select {...props} dictionary={dictionary} ref={ref}/>
-						</ValidationProviderServer>
+						<Select {...props} dictionary={dictionary} ref={ref}/>
 					)
 				}
 				default: {
+					const { intltextposition, labelClassName, labelId, dictionary, testText, as, ... elementProps } = props;
+
 					return createElement(props.as, {
-						...props,
+						...elementProps,
 						children,
 						className: variant ? `${variant} ${className}` : className,
 						ref: ref,

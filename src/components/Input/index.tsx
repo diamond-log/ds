@@ -5,14 +5,14 @@ import { DSInputProps } from "../../types/Input"
 import { forwardRef, useState } from "react";
 import { idToIndex } from "../../utils/idToIndex";
 import { Icon } from "../Icon";
-import { useValidation } from "../../contexts/ValidationContext";
+import { useValidation } from "../../hooks/useValidation";
 
-export const Input = forwardRef(({ dictionary, togglePasswordVisibility, alert, labelId, labelClassName, icon, ...props }: DSInputProps, ref: React.ForwardedRef<FormControlProps>) => {
+export const Input = forwardRef(({ dictionary, togglePasswordVisibility, alert, labelId, labelClassName, icon, containerProps, ...props }: DSInputProps, ref: React.ForwardedRef<FormControlProps>) => {
 
     const [visible, setVisible] = useState<boolean>(false);
     const intlText = dictionary?.[idToIndex(props.id)];
     const placeholder = props?.placeholder || intlText;
-    const { className } = useValidation();
+    const { className, ErrorMessage } = useValidation({ field: props.name! });
     props = {...props, className: `${className} ${props.className || ""}`};
 
     function toggleVisibility() {
@@ -56,7 +56,7 @@ export const Input = forwardRef(({ dictionary, togglePasswordVisibility, alert, 
 
     if(togglePasswordVisibility && props.type === "password") {
         InputComponent = (
-            <span className="d-flex position-relative align-items-center w-100">
+            <span className="d-flex position-relative align-items-center w-100" {...containerProps}>
                 <FormControl {...props} type={visible ? "text" : "password"} placeholder={placeholder} ref={ref} />
                 {
                     visible
@@ -78,7 +78,7 @@ export const Input = forwardRef(({ dictionary, togglePasswordVisibility, alert, 
     }
     else if (alert) {
         InputComponent = (
-            <span className="d-flex position-relative align-items-center w-100 p-0">
+            <span className="d-flex position-relative align-items-center w-100 p-0" {...containerProps}>
                 <FormControl {...props} placeholder={placeholder} ref={ref} />
                 <Icon
                 name={alertIcon[alert.type]}
@@ -90,7 +90,7 @@ export const Input = forwardRef(({ dictionary, togglePasswordVisibility, alert, 
     }
     else {
         InputComponent = (
-            <span className="d-flex position-relative align-items-center w-100 p-0">
+            <span className="d-flex position-relative align-items-center w-100 p-0" {...containerProps}>
                 <FormControl {...props} className={(icon ? "icon " : "") + (props.className || "")} placeholder={placeholder} ref={ref} />
                 <span className={`position-absolute me-2 end-0`}>{icon}</span>
             </span>
@@ -105,6 +105,7 @@ export const Input = forwardRef(({ dictionary, togglePasswordVisibility, alert, 
                     {LabelComponent}
                     {InputComponent}
                     {AlertComponent}
+                    {ErrorMessage}
                 </div>
             </>
         ) :
@@ -113,12 +114,14 @@ export const Input = forwardRef(({ dictionary, togglePasswordVisibility, alert, 
                 <div className={"w-100 d-flex flex-column gap-1 p-0"}>
                     {LabelComponent}
                     {InputComponent}
+                    {ErrorMessage}
                 </div>
             </>
         )
         : (
             <>
                 {InputComponent}
+                {ErrorMessage}
             </>
         )
     )

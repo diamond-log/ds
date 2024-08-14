@@ -1,11 +1,11 @@
+import { LinkProps } from "next/link";
+import { HTMLAttributes, ReactHTML, ReactNode } from "react";
 import { BootstrapVariants } from "../../types/BootstrapVariants";
-import { IntlProps } from "../../types/IntlProps";
 import { DSButtonProps } from "../../types/Button";
 import { DSInputProps } from "../../types/Input";
-import { LinkProps } from "next/link";
-import { DSTagFieldProps } from "../TagField";
+import { IntlProps } from "../../types/IntlProps";
 import { DSSelectProps } from "../../types/Select";
-import { ReactHTML, HTMLAttributes, ReactNode } from "react";
+import { DSTagFieldProps } from "../TagField";
 interface ButtonElement extends DSButtonProps, Omit<IntlProps, "labelId" | "labelClassName"> {
     as: "button";
 }

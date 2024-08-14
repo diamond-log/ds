@@ -4,8 +4,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.useValidation = void 0;
 const jsx_runtime_1 = require("react/jsx-runtime");
 const react_hook_form_1 = require("react-hook-form");
-const FormContext_1 = require("./FormContext");
-const useValidation = ({ field, errorMessageProps, registerOptions }) => {
+const FormContext_1 = require("../contexts/FormContext");
+const useValidation = ({ field, errorMessageProps, registerOptions, inputRef }) => {
     const dsFormHook = (0, FormContext_1.useForm)();
     const reactHookForm = (0, react_hook_form_1.useFormContext)();
     const form = (dsFormHook || reactHookForm);

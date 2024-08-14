@@ -10,6 +10,7 @@ export declare const Input: import("react").ForwardRefExoticComponent<{
     labelId?: string;
     labelClassName?: string;
     icon?: React.ReactNode;
+    containerProps?: React.HTMLProps<HTMLDivElement>;
 } & FormControlProps & Omit<{
     intltextposition?: "left" | "right";
     dictionary?: Record<string, string>;

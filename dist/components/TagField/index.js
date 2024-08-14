@@ -8,11 +8,11 @@ const jsx_runtime_1 = require("react/jsx-runtime");
 const react_1 = require("react");
 const react_tag_input_1 = require("react-tag-input");
 const FormContext_1 = require("../../contexts/FormContext");
-const ValidationContext_1 = require("../../contexts/ValidationContext");
+const useValidation_1 = require("../../hooks/useValidation");
 const idToIndex_1 = require("../../utils/idToIndex");
 const Icon_1 = require("../Icon");
 const utils_1 = require("../../utils");
-function TagField({ allowDragDrop = false, allowAddNewTags = false, autoFocus = false, minQueryLength = 1, inputFieldPosition = "inline", field, dictionary, labelId, labelClassName, onAddition, suggestions, defaultValue, maxLength, minLength, maxTags, fieldId = "uid", ...props }) {
+function TagField({ allowDragDrop = false, allowAddNewTags = false, autoFocus = false, minQueryLength = 1, inputFieldPosition = "inline", field, dictionary, labelId, labelClassName, onAddition, suggestions, defaultValue, maxLength, minLength, minTags, maxTags, fieldId = "uid", validateMessage, required, ...props }) {
     const [tags, setTags] = (0, react_1.useState)(defaultValue
         ? defaultValue.map(value => ({
             ...value,
@@ -21,9 +21,19 @@ function TagField({ allowDragDrop = false, allowAddNewTags = false, autoFocus = 
         }))
         : []);
     const [focus, setFocus] = (0, react_1.useState)(false);
-    const { setValue, getValues } = (0, FormContext_1.useForm)();
-    const { className } = (0, ValidationContext_1.useValidation)(field);
-    const filteredTags = tags.filter(tag => !!tag?.id);
+    const { setValue, getValues, clearErrors, setError, formState: { errors } } = (0, FormContext_1.useForm)();
+    const validation = (minTags || maxTags || required) ? {
+        validate: {
+            required: (arrValue) => required ? (arrValue?.length > 0 ? undefined : validateMessage?.required) : undefined,
+            minTags: (arrValue) => minTags ? (arrValue?.length >= minTags ? undefined : validateMessage?.minTags) : undefined,
+            // refactor
+            maxTags: (arrValue) => maxTags && arrValue ? (arrValue.length <= maxTags ? undefined : validateMessage?.maxTags) : undefined
+        }
+    } : undefined;
+    const { className, ErrorMessage, ValidationInput } = (0, useValidation_1.useValidation)({
+        field,
+        registerOptions: validation
+    });
     (0, react_1.useEffect)(() => {
         setTags(defaultValue
             ? defaultValue.map(value => ({
@@ -33,6 +43,7 @@ function TagField({ allowDragDrop = false, allowAddNewTags = false, autoFocus = 
             }))
             : []);
     }, [defaultValue]);
+    const filteredTags = tags.filter(tag => !!tag?.id);
     const handleDelete = (index, _event) => {
         if (tags[index]?.disabled)
             return;
@@ -47,6 +58,18 @@ function TagField({ allowDragDrop = false, allowAddNewTags = false, autoFocus = 
             return false;
         });
         setValue(field, formValues);
+        if (required && formValues.length === 0) {
+            setError(field, {
+                type: "required",
+                message: validateMessage?.required
+            });
+        }
+        if (minTags && formValues.length < minTags) {
+            setError(field, {
+                type: "minTags",
+                message: validateMessage?.minTags
+            });
+        }
     };
     const onTagUpdate = (index, newTag) => {
         const updatedTags = [...tags];
@@ -94,7 +117,12 @@ function TagField({ allowDragDrop = false, allowAddNewTags = false, autoFocus = 
             });
         }
         const prevValues = getValues(field) || [];
-        setValue(field, [...prevValues, tagsValue.at(-1).value]);
+        const newValues = [...prevValues, tagsValue.at(-1).value];
+        setValue(field, newValues);
+        if (errors[field]?.type === "minTags" && newValues.length >= minTags ||
+            errors[field]?.type === "required" && newValues.length >= (minTags || 0)) {
+            clearErrors(field);
+        }
     };
     const handleDrag = (tag, currPos, newPos) => {
         const newTags = tags.slice();
@@ -119,6 +147,12 @@ function TagField({ allowDragDrop = false, allowAddNewTags = false, autoFocus = 
                 borderRadius: "0.375rem"
             }, children: suggestion?.render || suggestion.text }));
     };
+    const shouldRendersuggestions = (query) => {
+        if (maxTags && tags.length >= maxTags)
+            return false;
+        if (focus)
+            return true;
+    };
     const filterSuggestions = (query, suggestions) => {
         const ns = (str) => (0, utils_1.normalizeString)(str, { lowerCase: true });
         return (suggestions
@@ -126,27 +160,18 @@ function TagField({ allowDragDrop = false, allowAddNewTags = false, autoFocus = 
             return ns(text)?.includes(ns(query));
         }));
     };
-    const InputTagElement = ((0, jsx_runtime_1.jsx)(jsx_runtime_1.Fragment, { children: (0, jsx_runtime_1.jsx)(react_tag_input_1.WithOutContext, { autocomplete: !allowAddNewTags ? true : props?.autocomplete, autoFocus: autoFocus, tags: filteredTags, suggestions: suggestions, handleInputFocus: () => setFocus(true), handleInputBlur: () => setFocus(false), renderSuggestion: renderSuggestion, shouldRenderSuggestions: () => focus, handleFilterSuggestions: filterSuggestions, separators: [react_tag_input_1.SEPARATORS.ENTER], handleDelete: handleDelete, handleAddition: handleAddition, handleDrag: handleDrag, onTagUpdate: onTagUpdate, inputFieldPosition: inputFieldPosition, onClearAll: onClearAll, allowDragDrop: allowDragDrop, minQueryLength: minQueryLength, removeComponent: (props) => {
+    const InputTagElement = ((0, jsx_runtime_1.jsx)(jsx_runtime_1.Fragment, { children: (0, jsx_runtime_1.jsx)(react_tag_input_1.WithOutContext, { inputProps: {
+                disabled: maxTags && tags.length >= maxTags
+            }, autocomplete: !allowAddNewTags ? true : props?.autocomplete, autoFocus: autoFocus, tags: filteredTags, suggestions: suggestions, handleInputFocus: () => setFocus(true), handleInputBlur: () => setFocus(false), renderSuggestion: renderSuggestion, shouldRenderSuggestions: shouldRendersuggestions, handleFilterSuggestions: filterSuggestions, separators: [react_tag_input_1.SEPARATORS.ENTER], handleDelete: handleDelete, handleAddition: handleAddition, handleDrag: handleDrag, onTagUpdate: onTagUpdate, inputFieldPosition: inputFieldPosition, onClearAll: onClearAll, allowDragDrop: allowDragDrop, minQueryLength: minQueryLength, removeComponent: (props) => {
                 if (props.tag?.disabled)
                     return null;
                 return ((0, jsx_runtime_1.jsx)(Icon_1.Icon, { name: "x", className: props.className + " cursor-pointer", variant: "gray-600", size: "3", onClick: props.onRemove }));
             }, placeholder: dictionary?.[(0, idToIndex_1.idToIndex)(props.id)] || '', classNames: {
-                // root: "tagfield-root",
-                // rootFocused: "tagfield-root-focused",
-                // selected: "tagfield-selected",
-                // selectedTag: "tagfield-selected-tag",
-                // selectedTagName: "tagfield-selected-tag-name",
-                // search: "tagfield-search",
-                // searchInput: "tagfield-search-input",
-                // suggestions: "tagfield-suggestions",
-                // suggestionActive: "tagfield-suggestion-active",
-                // suggestionDisabled: "tagfield-suggestion-disabled",
                 tag: 'tagfield-tag bg-gray-200 rounded-1',
                 tags: 'tagfield-tags w-100',
                 tagInput: 'tagfield-tag-input flex-grow-1',
                 tagInputField: 'tagfield-tag-input-field',
-                selected: 'tagfield-selected ' + className,
-                // remove: 'tagfield-remove',
+                selected: 'tagfield-selected' + (className ? ` ${className}` : '') + (props?.className ? ` ${props?.className}` : ''),
                 suggestions: 'tagfield-suggestions border border-gray',
                 activeSuggestion: 'tagfield-active-suggestion',
                 editTagInput: 'tagfield-edit-tag-input',
@@ -154,8 +179,8 @@ function TagField({ allowDragDrop = false, allowAddNewTags = false, autoFocus = 
                 clearAll: 'tagfield-clear-all',
             }, ...props }) }));
     if (labelId)
-        return ((0, jsx_runtime_1.jsxs)("div", { className: "w-100 d-flex flex-column gap-1 p-0", children: [labelId
-                    ? ((0, jsx_runtime_1.jsx)("label", { htmlFor: props.id, className: labelClassName + (props?.required ? ' isRequired' : ''), children: dictionary[(0, idToIndex_1.idToIndex)(labelId)] })) : null, InputTagElement] }));
-    return InputTagElement;
+        return ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsxs)("div", { className: "w-100 d-flex flex-column gap-1 p-0", children: [labelId
+                            ? ((0, jsx_runtime_1.jsx)("label", { htmlFor: props.id, className: labelClassName + (required ? ' isRequired' : ''), children: dictionary[(0, idToIndex_1.idToIndex)(labelId)] })) : null, InputTagElement, ErrorMessage] }), ValidationInput] }));
+    return ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [InputTagElement, ErrorMessage, ValidationInput] }));
 }
 ;

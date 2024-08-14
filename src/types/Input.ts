@@ -12,4 +12,5 @@ export type DSInputProps = {
     labelId?: string;
     labelClassName?: string;
     icon?: React.ReactNode;
+    containerProps?: React.HTMLProps<HTMLDivElement>;
 } & FormControlProps & Omit<IntlProps, "intltextposition">;
