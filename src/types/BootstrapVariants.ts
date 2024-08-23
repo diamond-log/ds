@@ -45,5 +45,6 @@ export type BootstrapVariants = (
     "red-600" |
     "red-700" |
     "red-800" |
-    "red-900"
+    "red-900" |
+    string
 );
