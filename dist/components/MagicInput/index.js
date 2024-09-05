@@ -30,7 +30,7 @@ const Icon_1 = require("../Icon");
  */
 const MagicInput = (0, react_1.forwardRef)(function (props, ref) {
     // Extract the component props and separate them from the native <input> element properties
-    const { onChange, onKeyDown, onBlur, onFocus, size, defaultValue, children, type, iconPosition, className, ...inputProps } = props;
+    const { onChange, onKeyDown, onBlur, onFocus, size, defaultValue, children, type, iconPosition, className, labelId, labelClassName, dictionary, ...inputProps } = props;
     /**
      * ============================== [STATES] ==============================
      * 1 - State to store if the list of suggestions will be shown or not
@@ -44,7 +44,7 @@ const MagicInput = (0, react_1.forwardRef)(function (props, ref) {
      * 1 - Ref to hide suggestions on a given delay;
      * 2 - Control Input Ref
      */
-    const run = (0, react_1.useRef)((0, utils_1.delay)(500));
+    const run = (0, react_1.useRef)((0, utils_1.delay)(100));
     const controlRef = (0, react_1.useRef)();
     // const suggestionIndexRef = useRef(0);
     // const focusRef = useRef(false);
@@ -77,7 +77,6 @@ const MagicInput = (0, react_1.forwardRef)(function (props, ref) {
                         return children;
                     }
                 });
-                [];
             }
         }
     }
@@ -85,7 +84,7 @@ const MagicInput = (0, react_1.forwardRef)(function (props, ref) {
         if (type === 'select' && e.key !== 'Tab') {
             e.preventDefault();
         }
-        // const child = filtered[suggestionIndexRef.current] as React.ReactElement<OptionProps>;
+        // const child = filtered[suggestionIndexRef.current] as React.ReactElement<DSOptionProps>;
         switch (e.key) {
             case 'Enter': {
                 if (showSuggestions && filtered) {
@@ -118,7 +117,7 @@ const MagicInput = (0, react_1.forwardRef)(function (props, ref) {
             // case 'ArrowDown': {
             // 	controlRef.current.value = child.props.children;
             // 	onChange(e);
-            // 	if (suggestionIndexRef.current < (filtered as React.ReactElement<OptionProps>[]).length - 1) {
+            // 	if (suggestionIndexRef.current < (filtered as React.ReactElement<DSOptionProps>[]).length - 1) {
             // 		suggestionIndexRef.current++
             // 	}
             // 	break;
@@ -185,18 +184,22 @@ const MagicInput = (0, react_1.forwardRef)(function (props, ref) {
             padding: '0.2rem 0.5rem',
         }
     };
-    return ((0, jsx_runtime_1.jsxs)(Wrapper_1.Wrapper.Input, { children: [(0, jsx_runtime_1.jsx)(Control_1.Control, { ...inputProps, ref: (0, react_merge_refs_1.mergeRefs)([controlRef, ref]), type: type, className: className ? className : 'form-control', onChange: handleControlChange, onKeyDown: handleControlKeyDown, onClick: handleControlClick, onBlur: handleControlBlur, onFocus: handleControlFocus.bind(controlRef.current?.value), iconPosition: type === 'select' ? 'start' : iconPosition, autoComplete: 'false', "aria-autocomplete": "none", defaultValue: defaultValue, style: styles.control }), type === 'select' &&
+    const LabelComponent = (labelId
+        ? ((0, jsx_runtime_1.jsx)("label", { htmlFor: props.id, className: labelClassName + (props?.required ? ' isRequired' : ''), children: dictionary?.[(0, utils_1.idToIndex)(labelId)] || '' }))
+        : null);
+    const MagicInputComponent = ((0, jsx_runtime_1.jsxs)(Wrapper_1.Wrapper.Input, { children: [(0, jsx_runtime_1.jsx)(Control_1.Control, { ...inputProps, ref: (0, react_merge_refs_1.mergeRefs)([controlRef, ref]), type: type, className: `magic-input ${className ? className : 'form-control'}`, onChange: handleControlChange, onKeyDown: handleControlKeyDown, onClick: handleControlClick, onBlur: handleControlBlur, onFocus: handleControlFocus.bind(controlRef.current?.value), iconPosition: type === 'select' ? 'start' : iconPosition, autoComplete: 'false', "aria-autocomplete": "none", defaultValue: defaultValue, style: styles.control }), type === 'select' &&
                 (0, jsx_runtime_1.jsx)(Icon_1.Icon, { name: "chevron-down", onClick: () => {
                         controlRef.current?.focus();
                         run.current.clear();
                         setShowSuggestions(!showSuggestions);
-                    }, style: styles.select }), showSuggestions &&
-                (0, jsx_runtime_1.jsx)(Wrapper_1.Wrapper.Suggestions, { children: react_1.Children.map(filtered, child => (0, react_1.cloneElement)(child, {
-                        onClick: () => {
-                            controlRef.current.value = child.props.children;
-                            controlRef.current?.focus();
-                            setShowSuggestions(false);
-                        }
-                    })) })] }));
+                    }, style: styles.select }), (showSuggestions && react_1.Children.count(filtered) > 0) ? ((0, jsx_runtime_1.jsx)(Wrapper_1.Wrapper.Suggestions, { children: react_1.Children.map(filtered, child => (0, react_1.cloneElement)(child, {
+                    onClick: () => {
+                        controlRef.current.value = child.props.children;
+                        controlRef.current?.focus();
+                        setShowSuggestions(false);
+                    }
+                })) })) : null] }));
+    return (labelId ? ((0, jsx_runtime_1.jsx)(jsx_runtime_1.Fragment, { children: (0, jsx_runtime_1.jsxs)("div", { className: "w-100 d-flex flex-column gap-1 p-0", children: [LabelComponent, MagicInputComponent] }) }))
+        : ((0, jsx_runtime_1.jsx)(jsx_runtime_1.Fragment, { children: MagicInputComponent })));
 });
 exports.default = MagicInput;

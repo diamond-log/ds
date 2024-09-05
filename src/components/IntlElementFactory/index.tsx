@@ -1,17 +1,21 @@
-import Link, { LinkProps } from "next/link";
-import { createElement, forwardRef, HTMLAttributes, ReactHTML, ReactNode } from "react";
+import { createElement, forwardRef } from "react";
 import { BootstrapVariants } from "../../types/BootstrapVariants";
-import { DSButtonProps } from "../../types/Button";
-import { DSInputProps } from "../../types/Input";
 import { IntlProps } from "../../types/IntlProps";
-import { DSSelectProps } from "../../types/Select";
 import { idToIndex } from "../../utils/idToIndex";
-import { loremText } from "../../utils/loremText";
 import { Button } from "../Button";
 import { Input } from "../Input";
-import { Select } from "../Select";
-import { DSTagFieldProps, TagField } from "../TagField";
+import { DSButtonProps } from "../../types/Button";
+import { DSInputProps } from "../../types/Input";
+import Link, { LinkProps } from "next/link";
+import { loremText } from "../../utils/loremText";
 import { Textarea } from "../Textarea";
+import { DSTagFieldProps, TagField } from "../TagField";
+import { DSSelectProps } from "../../types/Select";
+import { Select } from "../Select";
+import { ReactHTML, HTMLAttributes, ReactNode } from "react";
+import { ValidationProvider } from "../../contexts/ValidationContext";
+import { DSControlProps, DSMagicInputProps } from "../MagicInput/types";
+import MagicInput from "../MagicInput";
 
 interface ButtonElement extends DSButtonProps, Omit<IntlProps, "labelId" | "labelClassName"> {
 	as: "button";
@@ -40,11 +44,15 @@ interface SelectElement extends DSSelectProps {
 	as: "select";
 }
 
+interface MagicInputElement extends Omit<DSMagicInputProps, "as"> {
+	as: "magic-input";
+}
+
 interface OthersElements extends Pick<IntlProps, "testText" | "intltextposition">, HTMLAttributes<HTMLSpanElement> {
 	as: keyof ReactHTML;
 }
 
-export type UnionElementsProps = (ButtonElement | LinkElement | InputElement | TextareaElement | InputTagElement | SelectElement | OthersElements);
+export type UnionElementsProps = (ButtonElement | LinkElement | InputElement | TextareaElement | InputTagElement | SelectElement | MagicInputElement | OthersElements);
 
 export type IntlElementProps = {
 	variant?: BootstrapVariants;
@@ -83,7 +91,7 @@ export function IntlElementFactory<T extends Record<string, any>>(dictionaryProp
 			})();
 
 			const dictionary = (form ? dictionaryProp[idToIndex(form)] : dictionaryProp) as Record<string, string>;
-			const name: string | undefined = (props as React.InputHTMLAttributes<HTMLInputElement>)?.name;
+			const name: string | undefined = (props as React.InputHTMLAttributes<HTMLInputElement>)?.name!;
 
 			switch (props.as) {
 				case "button": {
@@ -91,17 +99,23 @@ export function IntlElementFactory<T extends Record<string, any>>(dictionaryProp
 				}
 				case "input-tag": {
 					return (
-						<TagField {...props} dictionary={dictionary}/>
+						<ValidationProvider field={props.field}>
+							<TagField {...props} dictionary={dictionary}/>
+						</ValidationProvider>
 					)
 				}
 				case "input": {
 					return (
-						<Input {...props} ref={ref} dictionary={dictionary}/>
+						<ValidationProvider field={name}>
+							<Input {...props} ref={ref} dictionary={dictionary}/>
+						</ValidationProvider>
 					)
 				}
 				case "textarea": {
 					return (
-						<Textarea {...props} ref={ref} dictionary={dictionary}/>
+						<ValidationProvider field={name}>
+							<Textarea {...props} ref={ref} dictionary={dictionary}/>
+						</ValidationProvider>
 					)
 				}
 				case "a": {
@@ -110,14 +124,21 @@ export function IntlElementFactory<T extends Record<string, any>>(dictionaryProp
 				}
 				case "select": {
 					return (
-						<Select {...props} dictionary={dictionary} ref={ref}/>
+						<ValidationProvider field={name}>
+							<Select {...props} dictionary={dictionary} ref={ref}/>
+						</ValidationProvider>
+					)
+				}
+				case "magic-input": {
+					return (
+						<ValidationProvider field={name}>
+							<MagicInput {...props} as={undefined} dictionary={dictionary} ref={ref} />
+						</ValidationProvider>
 					)
 				}
 				default: {
-					const { intltextposition, labelClassName, labelId, dictionary, testText, as, ... elementProps } = props;
-
 					return createElement(props.as, {
-						...elementProps,
+						...props,
 						children,
 						className: variant ? `${variant} ${className}` : className,
 						ref: ref,

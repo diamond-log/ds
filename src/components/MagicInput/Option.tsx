@@ -1,10 +1,10 @@
-import { OptionProps } from "./types"
+import { DSOptionProps } from "./types"
 
-export function Option(props: OptionProps) {
+export function Option(props: DSOptionProps) {
 
 	const className: { [key: string]: string } = {
-		initial: 'bg-white',
-		hover: 'bg-cedar-primary text-white'
+		initial: 'option',
+		hover: 'option-hover'
 	}
 
 	return (

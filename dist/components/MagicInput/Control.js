@@ -4,8 +4,11 @@ exports.Control = void 0;
 const jsx_runtime_1 = require("react/jsx-runtime");
 // React
 const react_1 = require("react");
+const ValidationContext_1 = require("../../contexts/ValidationContext");
 exports.Control = (0, react_1.forwardRef)((props, ref) => {
-    const { icon, iconPosition, ...inputProps } = props;
+    const { icon, iconPosition, className, ...inputProps } = props;
+    const validation = (0, ValidationContext_1.useValidation)();
+    const validationClassName = validation?.className || '';
     const wrapperStyle = {
         width: '100%',
         display: 'flex',
@@ -39,6 +42,6 @@ exports.Control = (0, react_1.forwardRef)((props, ref) => {
             };
         }
     }
-    return ((0, jsx_runtime_1.jsxs)("div", { style: wrapperStyle, children: [(0, jsx_runtime_1.jsx)("input", { ...inputProps, style: controlStyle, ref: ref }), icon &&
+    return ((0, jsx_runtime_1.jsxs)("div", { style: wrapperStyle, children: [(0, jsx_runtime_1.jsx)("input", { ...inputProps, className: (validationClassName ? `${validationClassName} ` : '') + className, style: controlStyle, ref: ref }), icon &&
                 (0, jsx_runtime_1.jsx)("span", { style: getIconWrapperStyles(), children: icon })] }));
 });

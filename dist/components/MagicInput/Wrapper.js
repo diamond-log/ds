@@ -11,7 +11,7 @@ class Wrapper {
             background: '#fff',
             width: '100%'
         };
-        return ((0, jsx_runtime_1.jsx)("div", { style: style, onPointerOver: props.onPointerOver, onPointerLeave: props.onPointerLeave, children: props.children }));
+        return ((0, jsx_runtime_1.jsx)("div", { className: "magic-input-wrapper", style: style, onPointerOver: props.onPointerOver, onPointerLeave: props.onPointerLeave, children: props.children }));
     }
     static Suggestions(props) {
         const style = {
@@ -23,11 +23,11 @@ class Wrapper {
             width: '96%',
             zIndex: 1,
             top: '2.5rem',
-            maxHeight: '20rem',
+            maxHeight: '25rem',
             overflowY: 'scroll',
             overflowX: 'hidden'
         };
-        return ((0, jsx_runtime_1.jsx)("div", { className: "border border-gray", style: style, children: props.children }));
+        return ((0, jsx_runtime_1.jsx)("div", { className: "magic-input-suggestions border border-gray", style: style, children: props.children }));
     }
 }
 exports.Wrapper = Wrapper;

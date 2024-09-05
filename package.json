@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "diamond-ds",
-  "version": "0.1.1",
+  "version": "0.1.0",
   "description": "Diamond Log's Design System",
   "license": "UNLICENSED",
   "contributors": [
@@ -23,6 +23,7 @@
     "@fullcalendar/interaction": "^6.1.14",
     "@fullcalendar/react": "^6.1.14",
     "@fullcalendar/timegrid": "^6.1.14",
+    "@hookform/error-message": "^2.0.1",
     "next": "^14.1.4",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",

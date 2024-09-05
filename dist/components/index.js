@@ -22,4 +22,5 @@ __exportStar(require("./Chip"), exports);
 __exportStar(require("./TagField"), exports);
 __exportStar(require("./DragNDrop"), exports);
 __exportStar(require("./Calendar"), exports);
+__exportStar(require("./MagicInput"), exports);
 // export * from './TextEditor';

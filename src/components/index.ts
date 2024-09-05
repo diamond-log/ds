@@ -6,5 +6,5 @@ export * from './Chip';
 export * from './TagField';
 export * from './DragNDrop';
 export * from './Calendar';
-// export * from './TextEditor';
 export * from './MagicInput';
+// export * from './TextEditor';

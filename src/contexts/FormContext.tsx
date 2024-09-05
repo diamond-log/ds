@@ -53,6 +53,12 @@ function HookFormProvider<FormDataType extends FieldValues, ContextProps = {}>(
 		<Provider {...form}>
 			<Form
 			noValidate
+			onKeyDown={(e) => {
+				if (e.key === "Enter") {
+					e.preventDefault();
+					e.stopPropagation();
+				}
+			}}
 			{...props}
 			onSubmit={(e) => {
 				form.handleSubmit(onSubmit, onError)(e);

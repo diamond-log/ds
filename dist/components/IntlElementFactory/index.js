@@ -5,15 +5,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IntlElementFactory = IntlElementFactory;
 const jsx_runtime_1 = require("react/jsx-runtime");
-const link_1 = __importDefault(require("next/link"));
 const react_1 = require("react");
 const idToIndex_1 = require("../../utils/idToIndex");
-const loremText_1 = require("../../utils/loremText");
 const Button_1 = require("../Button");
 const Input_1 = require("../Input");
-const Select_1 = require("../Select");
-const TagField_1 = require("../TagField");
+const link_1 = __importDefault(require("next/link"));
+const loremText_1 = require("../../utils/loremText");
 const Textarea_1 = require("../Textarea");
+const TagField_1 = require("../TagField");
+const Select_1 = require("../Select");
+const ValidationContext_1 = require("../../contexts/ValidationContext");
+const MagicInput_1 = __importDefault(require("../MagicInput"));
 ;
 ;
 ;
@@ -48,25 +50,27 @@ function IntlElementFactory(dictionaryProp, form) {
                 return (0, jsx_runtime_1.jsx)(Button_1.Button, { ...props, dictionary: dictionary });
             }
             case "input-tag": {
-                return ((0, jsx_runtime_1.jsx)(TagField_1.TagField, { ...props, dictionary: dictionary }));
+                return ((0, jsx_runtime_1.jsx)(ValidationContext_1.ValidationProvider, { field: props.field, children: (0, jsx_runtime_1.jsx)(TagField_1.TagField, { ...props, dictionary: dictionary }) }));
             }
             case "input": {
-                return ((0, jsx_runtime_1.jsx)(Input_1.Input, { ...props, ref: ref, dictionary: dictionary }));
+                return ((0, jsx_runtime_1.jsx)(ValidationContext_1.ValidationProvider, { field: name, children: (0, jsx_runtime_1.jsx)(Input_1.Input, { ...props, ref: ref, dictionary: dictionary }) }));
             }
             case "textarea": {
-                return ((0, jsx_runtime_1.jsx)(Textarea_1.Textarea, { ...props, ref: ref, dictionary: dictionary }));
+                return ((0, jsx_runtime_1.jsx)(ValidationContext_1.ValidationProvider, { field: name, children: (0, jsx_runtime_1.jsx)(Textarea_1.Textarea, { ...props, ref: ref, dictionary: dictionary }) }));
             }
             case "a": {
                 const { as, ...linkProps } = props;
                 return (0, jsx_runtime_1.jsx)(link_1.default, { ...linkProps, children, ref });
             }
             case "select": {
-                return ((0, jsx_runtime_1.jsx)(Select_1.Select, { ...props, dictionary: dictionary, ref: ref }));
+                return ((0, jsx_runtime_1.jsx)(ValidationContext_1.ValidationProvider, { field: name, children: (0, jsx_runtime_1.jsx)(Select_1.Select, { ...props, dictionary: dictionary, ref: ref }) }));
+            }
+            case "magic-input": {
+                return ((0, jsx_runtime_1.jsx)(ValidationContext_1.ValidationProvider, { field: name, children: (0, jsx_runtime_1.jsx)(MagicInput_1.default, { ...props, as: undefined, dictionary: dictionary, ref: ref }) }));
             }
             default: {
-                const { intltextposition, labelClassName, labelId, dictionary, testText, as, ...elementProps } = props;
                 return (0, react_1.createElement)(props.as, {
-                    ...elementProps,
+                    ...props,
                     children,
                     className: variant ? `${variant} ${className}` : className,
                     ref: ref,

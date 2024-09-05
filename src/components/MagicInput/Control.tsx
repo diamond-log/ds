@@ -2,11 +2,14 @@
 import { type CSSProperties, forwardRef } from 'react';
 
 // Types
-import { ControlProps } from './types';
+import { DSControlProps } from './types';
+import { useValidation } from '../../contexts/ValidationContext';
 
-export const Control = forwardRef((props: ControlProps, ref: React.ForwardedRef<HTMLInputElement>) => {
+export const Control = forwardRef((props: DSControlProps, ref: React.ForwardedRef<HTMLInputElement>) => {
 
-	const { icon, iconPosition, ...inputProps } = props;
+	const { icon, iconPosition, className, ...inputProps } = props;
+	const validation = useValidation();
+	const validationClassName = validation?.className || '';
 
 	const wrapperStyle: CSSProperties = {
 		width: '100%',
@@ -48,9 +51,10 @@ export const Control = forwardRef((props: ControlProps, ref: React.ForwardedRef<
 	return (
 		<div style={wrapperStyle}>
 			<input
-				{...inputProps}
-				style={controlStyle}
-				ref={ref}
+			{...inputProps}
+			className={(validationClassName ? `${validationClassName} ` : '') + className}
+			style={controlStyle}
+			ref={ref}
 			/>
 			{icon &&
 				<span style={getIconWrapperStyles()}>{icon}</span>

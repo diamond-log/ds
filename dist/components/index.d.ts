@@ -6,3 +6,4 @@ export * from './Chip';
 export * from './TagField';
 export * from './DragNDrop';
 export * from './Calendar';
+export * from './MagicInput';

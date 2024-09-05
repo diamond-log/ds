@@ -1,4 +1,4 @@
-import { MagicInputProps } from "./types";
+import { DSOptionProps } from "./types";
 /**
  *
  * ============================== [COMPONENT'S HYERARCHY] ==============================
@@ -15,7 +15,17 @@ import { MagicInputProps } from "./types";
  *
  *
  */
-declare const MagicInput: import("react").ForwardRefExoticComponent<Omit<MagicInputProps & import("react-bootstrap").FormControlProps & import("react").InputHTMLAttributes<any> & {
+declare const MagicInput: import("react").ForwardRefExoticComponent<Omit<{
+    children?: React.ReactElement<DSOptionProps, typeof import("./Option").Option> | React.ReactElement<DSOptionProps, typeof import("./Option").Option>[];
+} & import("react").ClassAttributes<HTMLInputElement> & import("react").InputHTMLAttributes<HTMLInputElement> & {
+    children?: import("react").ReactNode | undefined;
+} & Omit<{
+    intltextposition?: "left" | "right";
+    dictionary?: Record<string, string>;
+    testText?: [start: number, end: number];
+    labelId?: string;
+    labelClassName?: string;
+}, "intltextposition"> & import("react-bootstrap").FormControlProps & import("react").InputHTMLAttributes<any> & {
     icon?: React.ReactElement<BsIconProps, any>;
     iconPosition?: "start" | "end";
 }, "ref"> & import("react").RefAttributes<HTMLInputElement>>;

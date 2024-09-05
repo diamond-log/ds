@@ -1,18 +1,18 @@
 'use client';
 
-import FormControl, { FormControlProps } from "react-bootstrap/FormControl"
-import { DSInputProps } from "../../types/Input"
 import { forwardRef, useState } from "react";
+import FormControl, { FormControlProps } from "react-bootstrap/FormControl";
+import { useValidation } from "../../contexts/ValidationContext";
+import { DSInputProps } from "../../types/Input";
 import { idToIndex } from "../../utils/idToIndex";
 import { Icon } from "../Icon";
-import { useValidation } from "../../hooks/useValidation";
 
 export const Input = forwardRef(({ dictionary, togglePasswordVisibility, alert, labelId, labelClassName, icon, containerProps, ...props }: DSInputProps, ref: React.ForwardedRef<FormControlProps>) => {
 
     const [visible, setVisible] = useState<boolean>(false);
     const intlText = dictionary?.[idToIndex(props.id)];
     const placeholder = props?.placeholder || intlText;
-    const { className, ErrorMessage } = useValidation({ field: props.name! });
+    const { className } = useValidation();
     props = {...props, className: `${className} ${props.className || ""}`};
 
     function toggleVisibility() {
@@ -57,7 +57,7 @@ export const Input = forwardRef(({ dictionary, togglePasswordVisibility, alert, 
     if(togglePasswordVisibility && props.type === "password") {
         InputComponent = (
             <span className="d-flex position-relative align-items-center w-100" {...containerProps}>
-                <FormControl {...props} type={visible ? "text" : "password"} placeholder={placeholder} ref={ref} />
+                <FormControl {...props} type={visible ? "text" : "password"} placeholder={placeholder} ref={ref}/>
                 {
                     visible
                         ? <Icon name="eye" role="button" className="position-absolute end-0 me-2" onClick={() => toggleVisibility()}/>
@@ -105,7 +105,6 @@ export const Input = forwardRef(({ dictionary, togglePasswordVisibility, alert, 
                     {LabelComponent}
                     {InputComponent}
                     {AlertComponent}
-                    {ErrorMessage}
                 </div>
             </>
         ) :
@@ -114,14 +113,12 @@ export const Input = forwardRef(({ dictionary, togglePasswordVisibility, alert, 
                 <div className={"w-100 d-flex flex-column gap-1 p-0"}>
                     {LabelComponent}
                     {InputComponent}
-                    {ErrorMessage}
                 </div>
             </>
         )
         : (
             <>
                 {InputComponent}
-                {ErrorMessage}
             </>
         )
     )

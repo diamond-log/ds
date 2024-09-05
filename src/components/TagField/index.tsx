@@ -5,12 +5,13 @@
 import { useEffect, useState } from 'react';
 import { WithOutContext as ReactTags, ReactTagsWrapperProps, SEPARATORS } from 'react-tag-input';
 import { useForm } from '../../contexts/FormContext';
-import { useValidation } from '../../hooks/useValidation';
+import { useValidation } from '../../contexts/ValidationContext';
 import { IntlProps } from '../../types';
 import { idToIndex } from '../../utils/idToIndex';
 import { Icon } from '../Icon';
 import { normalizeString } from '../../utils';
 import { RegisterOptions } from 'react-hook-form';
+import { ValidationInput } from '../ValidationInput';
 
 export type Tag = {
   id: string;
@@ -28,35 +29,38 @@ export type Suggestion<ValueType = any[]> = {
   value?: ValueType extends any[] ? ValueType[number] : ValueType;
 }
 
+export type Validation<T> = {
+  value: T;
+  message?: string;
+}
+
 export type DSTagFieldProps<ValueType = any[]> = {
   field: string;
   suggestions?: Suggestion<ValueType>[];
-  
-  /** 
-    Required to continue rendering tags due to a rerendering bug
-  **/
+  /** ! Required to continue rendering tags due to a rerendering bug **/
   defaultValue?: (Suggestion<ValueType> | Tag)[];
-
   onAddition?: (data: Suggestion<ValueType>[number]) => Tag | undefined | false;
   allowAddNewTags?: boolean;
-  minTags?: number;
-  maxTags?: number;
+  fieldId?: string;
   minLength?: number;
   maxLength?: number;
-  fieldId?: string;
-  required?: boolean;
-  validateMessage?: {
-    required?: string;
-    minTags?: string;
-    maxTags?: string;
-  }
+  minTags?: Validation<number>;
+  maxTags?: Validation<number>;
+  /** Boolean or required error message */
+  required?: boolean | string;
+  registerOptions?: RegisterOptions;
+  // validateMessage?: {
+  //   required?: string;
+  //   minTags?: string;
+  //   maxTags?: string;
+  // }
   className?: string;
-} & Omit<ReactTagsWrapperProps, 'suggestions' | "tags" | "handleAddition"> & Omit<IntlProps, "intltextposition" | "testText">;
+} & Omit<ReactTagsWrapperProps, 'suggestions' | "tags" | "handleAddition" | "maxTags"> & Omit<IntlProps, "intltextposition" | "testText">;
 
 export function TagField<ValueType = any>({
   allowDragDrop = false, allowAddNewTags = false, autoFocus = false, minQueryLength = 1, inputFieldPosition = "inline",
   field, dictionary, labelId, labelClassName, onAddition, suggestions, defaultValue, maxLength, minLength, minTags, maxTags,
-  fieldId = "uid", validateMessage, required, ...props
+  fieldId = "uid", required, registerOptions, ...props
   }: DSTagFieldProps<ValueType>) {
 
   const [tags, setTags] = useState<Array<Tag>>(
@@ -69,23 +73,21 @@ export function TagField<ValueType = any>({
       : []
   );
   const [focus, setFocus] = useState(false);
-  const { setValue, getValues, clearErrors, setError, formState: { errors } } = useForm<
+  const { setValue, getValues, clearErrors, setError, getFieldState } = useForm<
   { [field: string]: ValueType } & typeof fieldId extends string ? { [fieldId: string]: ValueType } : {}
   >();
+  const { className } = useValidation();
   const validation: RegisterOptions | undefined = (minTags || maxTags || required ) ? {
+    ...registerOptions,
     validate: {
-      required: (arrValue: any[]) => required ? ( arrValue?.length > 0 ? undefined : validateMessage?.required ) : undefined,
-      minTags: (arrValue: any[]) => minTags ? ( arrValue?.length >= minTags ? undefined : validateMessage?.minTags ) : undefined,
+      ...registerOptions?.validate,
+      required: (arrValue: any[]) => required ? ( arrValue?.length > 0 ? undefined : required ) : undefined,
+      minTags: (arrValue: any[]) => minTags ? ( arrValue?.length >= minTags.value ? undefined : minTags?.message || true ) : undefined,
 
       // refactor
-      maxTags: (arrValue: any[]) => maxTags && arrValue ? ( arrValue.length <= maxTags ? undefined : validateMessage?.maxTags ) : undefined
+      maxTags: (arrValue: any[]) => maxTags && arrValue ? ( arrValue.length <= maxTags.value ? undefined : maxTags?.message || true ) : undefined
     }
   } : undefined;
-
-  const { className, ErrorMessage, ValidationInput } = useValidation({
-    field,
-    registerOptions: validation
-  });
 
   useEffect(() => {
     setTags(
@@ -129,14 +131,14 @@ export function TagField<ValueType = any>({
     if(required && formValues.length === 0) {
       setError(field, {
         type: "required",
-        message: validateMessage?.required
+        message: typeof required === "string" ? required : undefined
       })
     }
 
-    if(minTags && formValues.length < minTags) {
+    if(minTags && formValues.length < minTags.value) {
       setError(field, {
         type: "minTags",
-        message: validateMessage?.minTags
+        message: minTags.message
       })
     }
   }; 
@@ -164,7 +166,7 @@ export function TagField<ValueType = any>({
 
   const handleAddition = (data: DSTagFieldProps['suggestions'][number]) => {
     if(!data.text.length || (maxLength && data.text.length > maxLength || (minLength && data.text.length < minLength))) return;
-    if(maxTags && tags.length >= maxTags) return;
+    if(maxTags && tags.length >= maxTags.value) return;
     if(!allowAddNewTags && !suggestions?.some(suggestion => (suggestion?.text === data?.text) || (suggestion?.value === data?.value) )) return;
 
     let tagsValue: Suggestion<ValueType>[] = [];
@@ -213,8 +215,8 @@ export function TagField<ValueType = any>({
     );
 
     if(
-      errors[field]?.type === "minTags" && newValues.length >= minTags ||
-      errors[field]?.type === "required" && newValues.length >= (minTags || 0)
+      getFieldState(field)?.error?.type === "minTags" && newValues.length >= minTags?.value ||
+      getFieldState(field)?.error?.type === "required" && newValues.length >= (minTags?.value || 0)
     ) {
       clearErrors(field);
     }
@@ -257,9 +259,9 @@ export function TagField<ValueType = any>({
     )
   }
 
-  const shouldRendersuggestions = (query: string) => {
+  const shouldRenderSuggestions = (query: string) => {
     if(
-      maxTags && tags.length >= maxTags
+      maxTags && tags.length >= maxTags.value
     ) return false;
 
     if(focus) return true;
@@ -280,7 +282,7 @@ export function TagField<ValueType = any>({
     <>
       <ReactTags
       inputProps={{
-        disabled: maxTags && tags.length >= maxTags
+        disabled: maxTags && tags.length >= maxTags.value
       }}
       autocomplete={!allowAddNewTags ? true : props?.autocomplete}
       autoFocus={autoFocus}
@@ -289,7 +291,7 @@ export function TagField<ValueType = any>({
       handleInputFocus={() => setFocus(true)}
       handleInputBlur={() => setFocus(false)}
       renderSuggestion={renderSuggestion}
-      shouldRenderSuggestions={shouldRendersuggestions}
+      shouldRenderSuggestions={shouldRenderSuggestions}
       handleFilterSuggestions={filterSuggestions}
       separators={[SEPARATORS.ENTER]}
       handleDelete={handleDelete}
@@ -340,21 +342,21 @@ export function TagField<ValueType = any>({
               <label
               htmlFor={props.id}
               className={labelClassName + (required ? ' isRequired' : '')}
-              >{dictionary[idToIndex(labelId)]}</label>
+              >
+                {dictionary?.[idToIndex(labelId)]}
+              </label>
             ) : null
         }
         {InputTagElement}
-        {ErrorMessage}
       </div>
-      {ValidationInput}
+      <ValidationInput field={field} registerOptions={validation}/>
     </>
   )
 
   return (
     <>
       {InputTagElement}
-      {ErrorMessage}
-      {ValidationInput}
+      <ValidationInput field={field} registerOptions={validation}/>
     </>
   )
 

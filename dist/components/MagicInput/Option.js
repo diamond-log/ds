@@ -4,8 +4,8 @@ exports.Option = Option;
 const jsx_runtime_1 = require("react/jsx-runtime");
 function Option(props) {
     const className = {
-        initial: 'bg-white',
-        hover: 'bg-cedar-primary text-white'
+        initial: 'option',
+        hover: 'option-hover'
     };
     return ((0, jsx_runtime_1.jsx)("div", { className: className.common, onClick: props.onClick, style: {
             cursor: 'pointer',
