@@ -1,4 +1,4 @@
-import { DSOptionProps } from "./types"
+import { DSOptionProps } from "../../types/MagicInput"
 
 export function Option(props: DSOptionProps) {
 

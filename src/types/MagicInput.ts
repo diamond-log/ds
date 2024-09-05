@@ -1,15 +1,14 @@
-import { BsIconProps, Icon } from "../../Icon";
-import { FormControl, FormControlProps } from "react-bootstrap";
-import { Option } from "./Option";
-import { IntlElementProps } from "../IntlElementFactory";
-import { IntlProps } from "../../types";
+import { FormControlProps } from "react-bootstrap";
+import { BsIconProps, Icon } from "../components/Icon";
+import { Option } from "../components/MagicInput/Option";
+import { IntlProps } from "../types";
 
-type DSControlProps = FormControlProps & React.InputHTMLAttributes<any> & {
+export type DSControlProps = FormControlProps & React.InputHTMLAttributes<any> & {
 	icon?: React.ReactElement<BsIconProps, typeof Icon>;
 	iconPosition?: 'start' | 'end';
 }
 
-type DSMagicInputProps = {
+export type DSMagicInputProps = {
 	children?: React.ReactElement<DSOptionProps, typeof Option> | React.ReactElement<DSOptionProps, typeof Option>[];
 } & (
 	React.PropsWithChildren<React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>> &
@@ -18,10 +17,10 @@ type DSMagicInputProps = {
 )
 
 
-interface DSOptionProps {
+export interface DSOptionProps {
 	// value: string;
 	children: string;
 	onClick?: React.MouseEventHandler<HTMLDivElement>;
 }
 
-type DSMagicInputWrapper = React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>;
+export type DSMagicInputWrapper = React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>;

@@ -1,4 +1,4 @@
-import { DSMagicInputWrapper } from "./types";
+import { DSMagicInputWrapper } from "../../types/MagicInput";
 
 export class Wrapper {
 

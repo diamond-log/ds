@@ -2,7 +2,7 @@
 import { type CSSProperties, forwardRef } from 'react';
 
 // Types
-import { DSControlProps } from './types';
+import { DSControlProps } from '../../types/MagicInput';
 import { useValidation } from '../../contexts/ValidationContext';
 
 export const Control = forwardRef((props: DSControlProps, ref: React.ForwardedRef<HTMLInputElement>) => {

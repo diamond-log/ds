@@ -11,10 +11,10 @@ import { loremText } from "../../utils/loremText";
 import { Textarea } from "../Textarea";
 import { DSTagFieldProps, TagField } from "../TagField";
 import { DSSelectProps } from "../../types/Select";
+import { DSMagicInputProps } from "../../types/MagicInput";
 import { Select } from "../Select";
 import { ReactHTML, HTMLAttributes, ReactNode } from "react";
 import { ValidationProvider } from "../../contexts/ValidationContext";
-import { DSControlProps, DSMagicInputProps } from "../MagicInput/types";
 import MagicInput from "../MagicInput";
 
 interface ButtonElement extends DSButtonProps, Omit<IntlProps, "labelId" | "labelClassName"> {

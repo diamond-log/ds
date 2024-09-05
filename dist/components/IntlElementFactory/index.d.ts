@@ -5,8 +5,8 @@ import { DSInputProps } from "../../types/Input";
 import { LinkProps } from "next/link";
 import { DSTagFieldProps } from "../TagField";
 import { DSSelectProps } from "../../types/Select";
+import { DSMagicInputProps } from "../../types/MagicInput";
 import { ReactHTML, HTMLAttributes, ReactNode } from "react";
-import { DSMagicInputProps } from "../MagicInput/types";
 interface ButtonElement extends DSButtonProps, Omit<IntlProps, "labelId" | "labelClassName"> {
     as: "button";
 }

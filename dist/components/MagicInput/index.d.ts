@@ -1,4 +1,5 @@
-import { DSOptionProps } from "./types";
+import { DSOptionProps } from "../../types/MagicInput";
+import { Icon } from "../Icon";
 /**
  *
  * ============================== [COMPONENT'S HYERARCHY] ==============================
@@ -26,7 +27,7 @@ declare const MagicInput: import("react").ForwardRefExoticComponent<Omit<{
     labelId?: string;
     labelClassName?: string;
 }, "intltextposition"> & import("react-bootstrap").FormControlProps & import("react").InputHTMLAttributes<any> & {
-    icon?: React.ReactElement<BsIconProps, any>;
+    icon?: React.ReactElement<import("../Icon").BsIconProps, typeof Icon>;
     iconPosition?: "start" | "end";
 }, "ref"> & import("react").RefAttributes<HTMLInputElement>>;
 export default MagicInput;

@@ -8,7 +8,7 @@ import { Control } from "./Control";
 import { Wrapper } from "./Wrapper";
 
 // Types
-import { DSControlProps, DSMagicInputProps, DSOptionProps } from "./types";
+import { DSControlProps, DSMagicInputProps, DSOptionProps } from "../../types/MagicInput";
 
 // Utils
 import { delay, idToIndex } from "../../utils";
