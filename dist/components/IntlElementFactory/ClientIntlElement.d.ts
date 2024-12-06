@@ -1,4 +1,4 @@
-export declare function IntlElementFactory<T extends Record<string, any>>(dictionaryProp: T, form?: string): import("react").ForwardRefExoticComponent<(({
+declare function ClientIntlElement<T extends Record<string, any>>(dictionaryProp: T, form?: string): import("react").ForwardRefExoticComponent<(({
     variant?: import("../..").BootstrapVariants;
     id?: string;
     className?: string;
@@ -39,3 +39,4 @@ export declare function IntlElementFactory<T extends Record<string, any>>(dictio
     className?: string;
     children?: import("react").ReactNode;
 } & import("../../types/IntlElement").MagicInputElement, "ref">) & import("react").RefAttributes<any>>;
+export default ClientIntlElement;

@@ -1,4 +1,5 @@
-export declare function IntlElementFactory<T extends Record<string, any>>(dictionaryProp: T, form?: string): import("react").ForwardRefExoticComponent<(({
+import { LinkElement } from "../../types/IntlElement";
+export declare function ServerIntlElement<T extends Record<string, any>>(dictionaryProp: T, form?: string): import("react").ForwardRefExoticComponent<(({
     variant?: import("../..").BootstrapVariants;
     id?: string;
     className?: string;
@@ -8,7 +9,7 @@ export declare function IntlElementFactory<T extends Record<string, any>>(dictio
     id?: string;
     className?: string;
     children?: import("react").ReactNode;
-} & import("../../types/IntlElement").LinkElement) | ({
+} & LinkElement) | ({
     variant?: import("../..").BootstrapVariants;
     id?: string;
     className?: string;

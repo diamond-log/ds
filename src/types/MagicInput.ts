@@ -16,7 +16,6 @@ export type DSMagicInputProps = {
 	DSControlProps
 )
 
-
 export interface DSOptionProps {
 	// value: string;
 	children: string;
